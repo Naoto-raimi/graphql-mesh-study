@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<wsdl:definitions targetNamespace="http://www.herongyang.com/Service/"
+xmlns:hy="http://www.herongyang.com/Service/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+>
+<wsdl:documentation>RefillOrder_WSDL_11_SOAP_11_Document.wsdl Copyright (c) herongyang.com. All rights reserved Version 1.0</wsdl:documentation>
+<wsdl:types>
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.herongyang.com/Service/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+<xsd:element name="RefillOrderRequest" type="hy:RefillOrderRequestType" />
+<xsd:element name="RefillOrderResponse" type="hy:RefillOrderResponseType" />
+<xsd:complexType name="RefillOrderRequestType">
+<xsd:sequence>
+<xsd:element name="Patient" type="hy:PatientType" />
+<xsd:element name="Prescription" type="hy:PrescriptionType" />
+</xsd:sequence>
+<xsd:attribute name="version" type="xsd:string" />
+</xsd:complexType>
+<xsd:complexType name="RefillOrderResponseType">
+<xsd:sequence>
+<xsd:element name="OrderStatus" type="hy:OrderStatusType" />
+</xsd:sequence>
+<xsd:attribute name="version" type="xsd:string" />
+</xsd:complexType>
+<xsd:complexType name="PatientType">
+<xsd:attribute name="name" type="xsd:string" />
+<xsd:attribute name="birthDate" type="xsd:date" />
+</xsd:complexType>
+<xsd:complexType name="PrescriptionType">
+<xsd:attribute name="drug" type="xsd:string" />
+<xsd:attribute name="doctor" type="xsd:string" />
+</xsd:complexType>
+<xsd:complexType name="OrderStatusType">
+<xsd:attribute name="number" type="xsd:string" />
+<xsd:attribute name="status" type="xsd:string" />
+</xsd:complexType>
+</xsd:schema>
+</wsdl:types>
+<wsdl:message name="refillOrderInputMessage">
+<wsdl:part name="refillOrderInputPart" element="hy:RefillOrderRequest" />
+</wsdl:message>
+<wsdl:message name="refillOrderOutputMessage">
+<wsdl:part name="refillOrderOutputPart" element="hy:RefillOrderResponse" />
+</wsdl:message>
+<wsdl:portType name="refillOrderPortType">
+<wsdl:operation name="RefillOrder">
+<wsdl:input name="refillOrderInput" message="hy:refillOrderInputMessage" />
+<wsdl:output name="refillOrderOutput" message="hy:refillOrderOutputMessage" />
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="refillOrderBinding" type="hy:refillOrderPortType">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+<wsdl:operation name="RefillOrder">
+<soap:operation style="document" soapAction="http://www.herongyang.com/Service/RefillOrder" />
+<wsdl:input name="refillOrderInput">
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output name="refillOrderOutput">
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="refillOrderService">
+<wsdl:port name="refillOrderPort" binding="hy:refillOrderBinding">
+<soap:address location="http://www.herongyang.com/Service/RefillOrder.php" />
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,112 @@
+sources:
+  - name: Books
+    handler:
+      openapi:
+        source: http://localhost:3002/openapi.json
+  - name: Stores
+    handler:
+      graphql:
+        endpoint: http://0.0.0.0:3004/graphql
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+  - name: Hello
+    handler:
+      soap:
+        source: ./schema_files/soap/hello_soap11.wsdl
+  - name: RefillOrder
+    handler:
+      soap:
+        source: ./schema_files/soap/refillOrder_soap11.wsdl
+  # - name: GetStockPrice # dateでエラー,soap1.1でもsoap1.2でも変わらない
+  #   handler:
+  #     soap:
+  #       source: ./schema_files/soap/getStockPrice_soap11.wsdl
+  # - name: GetExchangeRate # dateでエラー
+  #   handler:
+  #     soap:
+  #       source: ./schema_files/soap/getExchangeRate_soap11.wsdl
+  # - name: Reservation # complexContentでエラー
+  #   handler:
+  #     soap:
+  #       source: ./schema_files/soap/reservation_soap11.wsdl
+  # - name: Registration # complexContentでエラー
+  #   handler:
+  #     soap:
+  #       source: ./schema_files/soap/registration_soap11.wsdl
+  - name: FridgeStock
+    handler:
+      postgraphile:
+        connectionString: postgres://postgres:postgres@localhost:5432/postgres
+        # You can also use environment variables like below
+        # connectionString: postgres://{env.POSTGRES_USER}:{env.POSTGRES_PASSWORD}@localhost/postgres
+transforms:
+  - rename: # 自動生成された名前をリネームできる
+      renames:
+        - from:
+            type: Query
+            field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true
+  # - filterSchema: # schemaをfilterできる
+  #     filters:
+  # - Query.stores
+  # - Query.!bookSells
+  # - Query.!{book, categories}
+  # - Query.!authors_v1_AuthorsService_{connectivityState, GetAuthor}
+
+plugins:
+  - maskedErrors:
+      errorMessage: "Something went wrong."
+
+additionalTypeDefs: |
+  extend type Store {
+    bookSells: [Sells!]! @resolveTo(
+      sourceName: "Stores",
+      sourceTypeName: "Query",
+      sourceFieldName: "bookSells",
+      requiredSelectionSet: "{ id }",
+      sourceArgs: {
+        storeId: "{root.id}"
+      }
+    )
+  }
+  extend type Sells {
+   book: Book @resolveTo(
+      sourceName: "Books",
+      sourceTypeName: "Query",
+      sourceFieldName: "AppController_book",
+      requiredSelectionSet: "{ bookId }",
+      sourceArgs: {
+        id: "{root.bookId}"
+      }
+    )
+  }
+  extend type Book {
+    author: authors_v1_Author @resolveTo(
+      sourceName: "Authors"                                  
+      sourceTypeName: "Query",       
+      sourceFieldName: "authors_v1_AuthorsService_GetAuthor",
+      requiredSelectionSet: "{ authorId }",
+      sourceArgs: { 
+        input: { id: "{root.authorId}" }
+      }
+    )
+  }
+
+# additionalTypeDefs: |　# 上記のresolverを別ファイル化も可能
+#   extend type Store {
+#     bookSells: [Sells!]!
+#   }
+#   extend type Sells {
+#     book: Book
+#   }
+#   extend type Book {
+#     author: authors_v1_Author
+#   }
+
+# additionalResolvers:
+#   - './resolvers'

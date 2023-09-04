@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<wsdl:definitions targetNamespace="http://www.herongyang.com/Service/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:hy="http://www.herongyang.com/Service/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+>
+<wsdl:documentation>GetExchangeRate_WSDL_11_SOAP_11_RPC.wsdl Copyright (c) herongyang.com. All rights reserved</wsdl:documentation>
+<wsdl:message name="getExchangeRateInputMessage">
+<wsdl:part name="datePart" type="xsd:date" />
+<wsdl:part name="fromCurrencyPart" type="xsd:string" />
+<wsdl:part name="toCurrencyPart" type="xsd:string" />
+</wsdl:message>
+<wsdl:message name="getExchangeRateOutputMessage">
+<wsdl:part name="ratePart" type="xsd:decimal" />
+</wsdl:message>
+<wsdl:portType name="getExchangeRatePortType">
+<wsdl:operation name="GetExchangeRate">
+<wsdl:input name="getExchangeRateInput" message="hy:getExchangeRateInputMessage" />
+<wsdl:output name="getExchangeRateOutput" message="hy:getExchangeRateOutputMessage" />
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="getExchangeRateBinding" type="hy:getExchangeRatePortType">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+<wsdl:operation name="GetExchangeRate">
+<soap:operation style="rpc" soapAction="http://www.herongyang.com/Service/getExchangeRate" />
+<wsdl:input name="getExchangeRateInput">
+<soap:body use="encoded" parts="fromCurrencyPart toCurrencyPart datePart" />
+</wsdl:input>
+<wsdl:output name="getExchangeRateOutput">
+<soap:body use="encoded" parts="ratePart" />
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="getExchangeRateService">
+<wsdl:port name="getExchangeRatePort" binding="hy:getExchangeRateBinding">
+<soap:address location="http://www.herongyang.com/Service/GetExchangeRate.php" />
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
