@@ -11,6 +11,13 @@ sources:
     handler:
       grpc:
         endpoint: localhost:3003
+    transforms:
+      - extend:
+          typeDefs: |
+            extend type authors_v1_Author {
+              namePlusId: String
+            }
+          resolvers: ./author.resolvers.ts
   - name: Hello
     handler:
       soap:
@@ -58,9 +65,14 @@ transforms:
   # - Query.!{book, categories}
   # - Query.!authors_v1_AuthorsService_{connectivityState, GetAuthor}
 
-plugins:
-  - maskedErrors:
-      errorMessage: "Something went wrong."
+# plugins:
+#   - maskedErrors:
+#       errorMessage: "Something went wrong."
+# - operationFieldPermissions:
+#     permissions:
+#       - if: "context.request.headers.get('x-consumer-username') === 'admin'"
+#         allow:
+#           - "*"
 
 additionalTypeDefs: |
   extend type Store {

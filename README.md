@@ -14,4 +14,8 @@
 
 [Enabling Error masking](https://the-guild.dev/graphql/mesh/docs/guides/error-masking#enabling-errors-masking)
 
-![](./img/connect_error3.png)
+![](./img/connect_error_3.png)
+
+### 404エラーの時
+
+![](./img/404_error_1.png)
