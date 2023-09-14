@@ -93,6 +93,7 @@ const router = createRouter({
             }
         } as const,
         handler(req) {
+            console.log(req)
             const book = books.find(book => book.id === req.params.id);
             if (!book) {
                 return Response.json({
