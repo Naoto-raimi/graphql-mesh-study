@@ -18,13 +18,6 @@ sources:
     handler:
       grpc:
         endpoint: localhost:3003
-    transforms:
-      - extend:
-          typeDefs: |
-            extend type authors_v1_Author {
-              namePlusId: String
-            }
-          resolvers: ./author.resolvers.ts
 
   # SOAP
   - name: Hello
@@ -57,10 +50,10 @@ sources:
   #       source: ./schema_files/soap/registration_soap11.wsdl
 
   # DataSource
-  - name: DVDRental
-    handler:
-      postgraphile:
-        connectionString: postgres://postgres:postgres@localhost:5432/dvdrental
+  # - name: DVDRental
+  #   handler:
+  #     postgraphile:
+  #       connectionString: postgres://postgres:postgres@localhost:5432/dvdrental
 
   - name: FridgeStock
     handler:
@@ -75,6 +68,13 @@ transforms:
         - from:
             type: Query
             field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true
+        - from:
+            type: Query
+            field: authors_v1_AuthorsService_(.*)
           to:
             type: Query
             field: $1
@@ -108,51 +108,32 @@ plugins:
           allow:
             - "*"
 
+        - if: "context.request.headers.get('x-consumer-username') === 'fridgeStock'"
+          allow:
+            - "Query.fridgeStock*"
+            - "Query.*FridgeStock*"
+            - "FridgeStock.*"
+            - "Mutation.*FridgeStock"
+            - "Mutation.*FridgeStock*"
+            - "CreateFridgeStockPayload.*"
+            - "UpdateFridgeStockPayload.*"
+            - "DeleteFridgeStockPayload.*"
+            # - "*FridgeStockPayload.*" # これはできない
+
 additionalTypeDefs: |
+  extend type authors_v1_Author {
+    namePlusId: String! 
+  }
   extend type Store {
-    bookSells: [Sells!]! @resolveTo(
-      sourceName: "Stores",
-      sourceTypeName: "Query",
-      sourceFieldName: "bookSells",
-      requiredSelectionSet: "{ id }",
-      sourceArgs: {
-        storeId: "{root.id}"
-      }
-    )
+    bookSells: [Sells!]!
   }
   extend type Sells {
-   book: Book @resolveTo(
-      sourceName: "Books",
-      sourceTypeName: "Query",
-      sourceFieldName: "AppController_book",
-      requiredSelectionSet: "{ bookId }",
-      sourceArgs: {
-        id: "{root.bookId}"
-      }
-    )
+   book: Book
   }
   extend type Book {
-    author: authors_v1_Author @resolveTo(
-      sourceName: "Authors"                                  
-      sourceTypeName: "Query",       
-      sourceFieldName: "authors_v1_AuthorsService_GetAuthor",
-      requiredSelectionSet: "{ authorId }",
-      sourceArgs: { 
-        input: { id: "{root.authorId}" }
-      }
-    )
+    author: authors_v1_Author
   }
 
-# additionalTypeDefs: |　# 上記のresolverを別ファイル化も可能
-#   extend type Store {
-#     bookSells: [Sells!]!
-#   }
-#   extend type Sells {
-#     book: Book
-#   }
-#   extend type Book {
-#     author: authors_v1_Author
-#   }
-
-# additionalResolvers:
-#   - './resolvers'
+additionalResolvers:
+  - "./author.resolvers"
+  - "./resolvers"
