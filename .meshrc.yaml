@@ -128,7 +128,11 @@ additionalTypeDefs: |
   extend type Book {
     author: authors_v1_Author
   }
+  extend type Query {
+    filterBooks(authorId: String): [Book]
+  }
 
 additionalResolvers:
   - "./author.resolvers"
+  - "./filterBooks.resolver"
   - "./resolvers"
