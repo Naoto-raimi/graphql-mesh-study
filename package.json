@@ -21,6 +21,8 @@
     "@graphql-mesh/transform-extend": "^0.95.2",
     "@graphql-mesh/transform-filter-schema": "^0.95.2",
     "@graphql-mesh/transform-rename": "^0.95.2",
-    "graphql": "^15.4.0"
+    "graphql": "^15.4.0",
+    "postgraphile": "^4.13.0",
+    "postgraphile-plugin-connection-filter": "^2.3.0"
   }
 }

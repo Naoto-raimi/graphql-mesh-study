@@ -1,15 +1,3 @@
--- --ユーザーの作成
--- CREATE USER docker;
--- CREATE ROLE docker WITH LOGIN PASSWORD :'docker';
--- --DBの作成
--- CREATE DATABASE docker;
--- --ユーザーにDBの権限をまとめて付与
--- GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
--- ALTER ROLE docker SET search_path TO public;
-
--- --ユーザーを切り替え
--- \c docker
-
 --テーブルを作成
 CREATE TABLE fridge_stock (
   id integer PRIMARY KEY, 

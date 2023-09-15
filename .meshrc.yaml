@@ -50,17 +50,12 @@ sources:
   #       source: ./schema_files/soap/registration_soap11.wsdl
 
   # DataSource
-  # - name: DVDRental
-  #   handler:
-  #     postgraphile:
-  #       connectionString: postgres://postgres:postgres@localhost:5432/dvdrental
-
   - name: FridgeStock
     handler:
       postgraphile:
         connectionString: postgres://postgres:postgres@localhost:5432/postgres
-        skipPlugins:
-          - "graphile-build-pg#PgNodeAliasPostGraphile"
+        appendPlugins:
+          - "postgraphile-plugin-connection-filter"
 
 transforms:
   - rename: # 自動生成された名前をリネームできる
@@ -86,43 +81,43 @@ transforms:
   #       - Query.!{book, categories}
   #       - Query.!authors_v1_AuthorsService_{connectivityState, GetAuthor}
 
-plugins:
-  # - httpCache:  # caching in Http
-  #     matches:
-  #       - "http://localhost:3002"
+# plugins:
+# - httpCache:  # caching in Http
+#     matches:
+#       - "http://localhost:3002"
 
-  # - responseCache:  # response cache
-  #     ttlPerCoordinate:
-  #       - coordinate: bookSells
-  #         ttl: 50000
-  #       - coordinate: Book
-  #         ttl: 40000
-  #     includeExtensionMetadata: true
+# - responseCache:  # response cache
+#     ttlPerCoordinate:
+#       - coordinate: bookSells
+#         ttl: 50000
+#       - coordinate: Book
+#         ttl: 40000
+#     includeExtensionMetadata: true
 
-  # - maskedErrors:
-  #       errorMessage: "Something went wrong."
+# - maskedErrors:
+#       errorMessage: "Something went wrong."
 
-  - operationFieldPermissions:
-      permissions:
-        - if: "context.request.headers.get('x-consumer-username') === 'admin'"
-          allow:
-            - "*"
+# - operationFieldPermissions:
+#     permissions:
+#       - if: "context.request.headers.get('x-consumer-username') === 'admin'"
+#         allow:
+#           - "*"
 
-        - if: "context.request.headers.get('x-consumer-username') === 'fridgeStock'"
-          allow:
-            - "Query.fridgeStock*"
-            - "Query.*FridgeStock*"
-            - "FridgeStock.*"
-            - "Mutation.*FridgeStock"
-            - "Mutation.*FridgeStock*"
-            - "CreateFridgeStockPayload.*"
-            - "UpdateFridgeStockPayload.*"
-            - "DeleteFridgeStockPayload.*"
-            # - "*FridgeStockPayload.*" # これはできない
+#       - if: "context.request.headers.get('x-consumer-username') === 'fridgeStock'"
+#         allow:
+#           - "Query.fridgeStock*"
+#           - "Query.*FridgeStock*"
+#           - "FridgeStock.*"
+#           - "Mutation.*FridgeStock"
+#           - "Mutation.*FridgeStock*"
+#           - "CreateFridgeStockPayload.*"
+#           - "UpdateFridgeStockPayload.*"
+#           - "DeleteFridgeStockPayload.*"
+#           # - "*FridgeStockPayload.*" # これはできない
 
 additionalTypeDefs: |
   extend type authors_v1_Author {
-    namePlusId: String! 
+    namePlusId: String!
   }
   extend type Store {
     bookSells: [Sells!]!

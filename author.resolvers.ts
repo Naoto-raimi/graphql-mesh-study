@@ -2,30 +2,15 @@ import { Resolvers } from './.mesh'
 
 const resolvers: Resolvers = {
   authors_v1_Author: {
-    namePlusId: root =>
-      `${root.name} ${root.id}`
+    namePlusId: {
+      // 指定したフィールドをresolveするのに必要なrootのプロパティを指定
+      // ここで指定しないとname,idがqueryのfieldに含まれていないとundefinedになる
+      selectionSet: "{ name, id }", 
+      resolve: (root, _args, _context, _info) => {
+        return `${root.name} ${root.id}`
+      }
+    }
   }
-  // Book: {
-  //   author: {
-  //     selectionSet: /* GraphQL */`
-  //     {
-  //       authorId
-  //     }
-  //     `,
-  //     resolve: async (root, _args, context, info) => {
-  //       return await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
-  //         root,
-  //         args: {
-  //           input: {
-  //             id: root.authorId,
-  //           }
-  //         },
-  //         context,
-  //         info,
-  //       })
-  //     }
-  //   }
-  // },
 }
 
 export default resolvers
